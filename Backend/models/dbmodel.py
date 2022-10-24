@@ -19,4 +19,4 @@ class Users(Base):
     password = Column(String,nullable=False)
     transaction_id = Column(String,nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
-    is_admin = Column(Boolean, server_default=" False ")
+    is_admin = Column(Boolean, nullable=False, server_default=" False ")
