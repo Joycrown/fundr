@@ -29,9 +29,9 @@ def upgrade() -> None:
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'),nullable= False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email','phone_no'),
-    pass
+
 
 
 def downgrade() -> None:
     op.drop_table('users')
-    pass
+  
