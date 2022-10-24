@@ -9,7 +9,7 @@ from apps.users import main, auth, oauth
 # dbmodel.Base.metadata.create_all(bind=engine)
 
 
-app =FastAPI()
+app = FastAPI()
 
 origins= ["*"]
 
