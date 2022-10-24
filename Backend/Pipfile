@@ -9,6 +9,7 @@ sqlalchemy = "*"
 psycopg = "*"
 psycopg2 = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
+passlib = "*"
 
 [dev-packages]
 
