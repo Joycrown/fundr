@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-   op.create_table('users',
+   op.create_table('fundr_users',
    sa.Column('id',sa.Integer(),nullable=False, primary_key=True),
    sa.Column('first_name',sa.String(),nullable=False),
    sa.Column('last_name',sa.String(),nullable=False),
