@@ -14,7 +14,7 @@ class UserCreate(BaseModel):
     phone_no: int
     password: str
     transaction_id: str
-    is_admin: bool =False
+    # is_admin: bool =False
 
 class UserOut(BaseModel):
     id: int
