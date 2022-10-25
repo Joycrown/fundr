@@ -30,6 +30,7 @@ def upgrade() -> None:
     op.add_column('users', sa.Column('is_admin', sa.Boolean(), server_default=' False ', nullable=True))
     op.create_unique_constraint(None, 'users', ['email'])
     op.create_unique_constraint(None, 'users', ['phone_no'])
+    op.create_primary_key(None, 'users',['id'])
     # ### end Alembic commands ###
 
 
