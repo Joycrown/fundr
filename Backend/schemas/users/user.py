@@ -30,3 +30,9 @@ class UserOut(BaseModel):
 
     class Config:
         orm_mode= True
+
+class passwordRest(BaseModel):
+    email: EmailStr
+    
+class password(BaseModel):
+    new_password:str

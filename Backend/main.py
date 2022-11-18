@@ -32,6 +32,6 @@ def root():
 @app.get('/testing')
 def test_db(db: Session = Depends(get_db), current_user: int = Depends(oauth.get_current_user)):
   user= db.query(dbmodel.Users).all()
-  return current_user
+  return user
 
 

@@ -20,3 +20,8 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: Optional[str]
     is_admin: bool
+
+
+# class PasswordTokenData(BaseModel):
+#     id: Optional[str]
+   
