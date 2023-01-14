@@ -1,5 +1,4 @@
-from fastapi import BackgroundTasks, UploadFile, File, Form, Depends, HTTPException, status
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi_mail import  ConnectionConfig
 from config.environ import settings
 
 

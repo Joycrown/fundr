@@ -1,17 +1,19 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from models import dbmodel
-from config.database import engine, get_db
+from config.database import  get_db
 from sqlalchemy.orm import Session 
 from apps.users import main, auth, oauth
-# from config.enivron import settings
-
-# dbmodel.Base.metadata.create_all(bind=engine)
+from fastapi_pagination import add_pagination
+from apps.requests.scaleRequests import scaleRequests
+from apps.requests.upgradeRequests import upgradeRequests
+from apps.requests.payoutRequests import payoutRequest
+from apps.admin import admin
 
 
 app = FastAPI()
 
-origins= ["*"]
+origins= ["http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +25,12 @@ app.add_middleware(
 
 app.include_router(main.router)
 app.include_router(auth.router)
+app.include_router(scaleRequests.router)
+app.include_router(upgradeRequests.router)
+app.include_router(payoutRequest.router)
+app.include_router(admin.router)
+
+add_pagination(app)
 
 @app.get("/")
 def root():

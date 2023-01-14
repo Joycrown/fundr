@@ -6,4 +6,4 @@ from typing import List
 
 
 class Email(BaseModel):
-    email: List[EmailStr]
+    email: List[str]

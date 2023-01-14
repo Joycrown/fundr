@@ -8,7 +8,7 @@ from config.database import Base
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
@@ -19,9 +19,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str]
-    is_admin: bool
+    email: EmailStr
 
 
-# class PasswordTokenData(BaseModel):
-#     id: Optional[str]
+
    
