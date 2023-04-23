@@ -11,6 +11,18 @@ class CreateAdmin(BaseModel):
     phone_no: int
     role: str
 
+
+class AdminOut(BaseModel):
+    first_name : str
+    last_name: str
+    email: EmailStr
+    phone_no: int
+    role: str
+    class Config:
+        orm_mode= True
+
+
+
 class AdminSignUp(BaseModel):
     password:str
     email: EmailStr
@@ -24,3 +36,8 @@ class AdminTokenData(BaseModel):
 class AdminTokenDataLogin(BaseModel):
    email:EmailStr
    id:int
+
+
+class AdminChangePassword(BaseModel):
+    current_password:str
+    new_password:str

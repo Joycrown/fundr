@@ -48,7 +48,7 @@ class UpgradeStatus(BaseModel):
     current_phase:str
     upgrade_to:str
     analytics:str
-    status:str
+    status_upgrade:str
 
 
 

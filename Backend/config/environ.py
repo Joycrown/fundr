@@ -16,9 +16,14 @@ class Settings(BaseSettings):
     email_password: str
     email_port:int
     email_server: str
+    api_url: str
+    api_key: str
+    api_secret_key: str
     
     class Config:
         env_file= ".env"
 
 
 settings = Settings()
+
+

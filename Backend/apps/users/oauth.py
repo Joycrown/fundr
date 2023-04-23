@@ -33,6 +33,8 @@ def verify_access_token(token:str, credentials_exception ):
         email= payload.get("email")
         if id is None:
             raise credentials_exception
+        elif email is None:
+            raise credentials_exception
         token_data= auth.TokenData(id=id,email=email) 
     except JWTError:
         raise credentials_exception
@@ -41,10 +43,11 @@ def verify_access_token(token:str, credentials_exception ):
 
     
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
-    detail=f"couldnt validate credentials", headers={"WWW-Authenticate":"Bearer"})
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+    detail=f"couldnt validate ", headers={"WWW-Authenticate":"Bearer"})
     token = verify_access_token(token, credentials_exception)
     user = db.query(dbmodel.Users).filter(dbmodel.Users.id == token.id).first()
+
     return user
 
 

@@ -9,7 +9,6 @@ sqlalchemy = "==1.4.42"
 psycopg = "*"
 psycopg2 = "==2.9.4"
 python-jose = "==3.3.0"
-passlib = "==1.7.4"
 alembic = "==1.8.1"
 anyio = "==3.6.2"
 bcrypt = "==4.0.1"
@@ -50,6 +49,7 @@ uvicorn = "==0.18.3"
 watchfiles = "==0.18.0"
 websockets = "==10.3"
 fastapi-mail = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
 
 [dev-packages]
 

@@ -1,13 +1,13 @@
 from fastapi import  Depends,HTTPException,status,APIRouter,Response
 from schemas.requests.upgrade import UpgradeRequest, UpgradeRequestOut, UpgradeStatus, UpgradeReject,UpgradeUpdate
-from utlis.users.email import send_mail, rejected_payment_email
+from utlis.users.email import upgrade_request_completed, upgrade_request_rejected,upgrade_request,upgrade_request_processing
 from models import dbmodel
 from config.database import get_db
 from sqlalchemy.orm import Session 
 from sqlalchemy import desc 
-from utlis.users.email import send_mail
-from apps.users import oauth
-from apps.admin import oauth
+from apps.users.oauth import get_current_user
+from apps.admin.oauth import get_current_user_admin_login
+
 
 
 
@@ -22,10 +22,14 @@ User route
 To send a upgarde request
 """
 @router.post('/upgrade',status_code=status.HTTP_201_CREATED, response_model=UpgradeRequestOut)
-async def send_upgrade_request(request: UpgradeRequest, db: Session = Depends(get_db), current_user: int = Depends(oauth.get_current_user)):
+async def send_upgrade_request(request: UpgradeRequest, db: Session = Depends(get_db), current_user: int = Depends(get_current_user)):
     account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == request.id).first()
     if account_details == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {request.id} does not exist")
+    if request.upgrade_to == account_details.phase :
+      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You cannot upgrade to current phase")
+    if account_details.status_upgrade == "Pending" or account_details.status_upgrade == "Sent":
+      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"You cannot send multiple requests")
     request.first_name = account_details.first_name
     request.last_name = account_details.last_name
     request.email = account_details.email
@@ -40,6 +44,12 @@ async def send_upgrade_request(request: UpgradeRequest, db: Session = Depends(ge
     db.add(new_request)
     db.commit()
     db.refresh(new_request)
+    await upgrade_request("Upgrade Request Received!", account_details.email, {
+    "title": "Upgrade Request Received!",
+    "name": account_details.first_name,
+    "phase": account_details.phase,
+    "upgradeTo": request.upgrade_to
+  })
     return  new_request
 
 
@@ -50,17 +60,23 @@ async def send_upgrade_request(request: UpgradeRequest, db: Session = Depends(ge
 Admin route
 To update a upgarde request
 """
-@router.put('/upgrade/status')
-async def update_upgrade_status(account:UpgradeStatus, db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user_login)):
+@router.put('/admin/upgrade/status')
+async def update_upgrade_status(account:UpgradeStatus, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id).first()
   if account_details == None:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
   account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
-  account_details.update({"status_upgrade":account.status,"upgrading_reason":"N/A","upgrade_to":account.upgrade_to},synchronize_session=False)
+  account_details.update({"status_upgrade":account.status_upgrade,"upgrading_reason":"N/A","upgrade_to":account.upgrade_to},synchronize_session=False)
   user_request = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == account.id).order_by(desc(dbmodel.Requests.created_at)).limit(10).first()
-  user_request.status_upgrade = account.status
+  user_request.status_upgrade = account.status_upgrade
   db.commit()
   db.refresh(user_request)
+  await upgrade_request_processing("Update! Upgrade Request Approved", account.email, {
+    "title": "Update! Upgrade Request Approved",
+    "name": account.first_name,
+    "phase": account.current_phase,
+    "upgradeTo": account.upgrade_to
+  })
   return Response(status_code=status.HTTP_202_ACCEPTED)
 
 
@@ -69,8 +85,8 @@ async def update_upgrade_status(account:UpgradeStatus, db: Session = Depends(get
 Admin route
 To reject a upgarde request
 """
-@router.put('/upgrade/reject')
-async def reject_upgrade_request(account:UpgradeReject,db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user_login)):
+@router.put('/admin/upgrade/reject')
+async def reject_upgrade_request(account:UpgradeReject,db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   check_account = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id).first()
   if check_account == None:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
@@ -83,10 +99,12 @@ async def reject_upgrade_request(account:UpgradeReject,db: Session = Depends(get
   user_request.reason = account.reason
   db.commit()
   db.refresh(user_request)
-  await rejected_payment_email("Upgrade Rejected", account.email, {
-    "title": "Upgrade Rejected",
+  await upgrade_request_rejected(" Update! Upgrade Request Rejected", account.email, {
+    "title": " Update! Upgrade Request Rejected",
     "name": check_account.last_name,
-    "reason": account.reason
+    "reason": account.reason,
+    "phase": check_account.phase,
+    "upgradeTo": check_account.upgrade_to
   })
 
   return Response(status_code=status.HTTP_208_ALREADY_REPORTED)
@@ -97,8 +115,8 @@ async def reject_upgrade_request(account:UpgradeReject,db: Session = Depends(get
 Admin route
 To confirm a upgarde request
 """
-@router.put('/upgrade/confirm')
-async def confirm_upgrade_request(account: UpgradeUpdate , db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user_login)):
+@router.put('/admin/upgrade/confirm')
+async def confirm_upgrade_request(account: UpgradeUpdate , db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
   if account_details.first() == None:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
@@ -109,13 +127,17 @@ async def confirm_upgrade_request(account: UpgradeUpdate , db: Session = Depends
   elif account_details.first().status_upgrade == "Sent":
      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User with id: {account.id} request has not been processed")
   else:
-    account_details.update({"status_upgrade":"completed","phase":account.phase,"upgrading_reason":"N/A"},synchronize_session=False)
+    account_details.update({"status_upgrade":"Completed","phase":account.phase,"upgrading_reason":"N/A"},synchronize_session=False)
     user_request = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == account.id).order_by(desc(dbmodel.Requests.created_at)).limit(10).first()
     user_request.status_upgrade = "Confirmed"
     db.commit()
-    await send_mail("Upgrade Successful", account_details.first().email, {
-    "title": "Upgrade Successful",
+    await upgrade_request_completed("Update! Upgrade Request Completed", account_details.first().email, {
+    "title": "Update! Upgrade Request Completed",
     "name":  account_details.first().last_name,
+    "phase": account.phase,
+    "mt_login": account_details.first().mt_login,
+    "mt_password": account_details.first().metatrader_password,
+    "server": account_details.first().mt_server
     })
     
     

@@ -5,19 +5,31 @@
     <h1 style="background-color: rgba(0, 53, 102, 1); padding: 5px 10px; border-radius: 5px; color: white;">{{ title }}</h1>
     <div style="margin: 30px auto; background: white; width: 40%; border-radius: 10px; padding: 50px; text-align: center;">
       <h3 style="margin-bottom: 100px; font-size: 24px;">Hi {{ name }}!</h3>
-      <p style="margin-bottom: 30px;">
-        unfortunately your payment for the below account has been rejected with reason.
+      <p style="margin-bottom: 30px;"> the following request has been made on your account and is pending confirmation.
 
-Account Purchased: {{account}}
-Rejection Reason: {{reason}}
 
-If you hve any disputes regarding this kindly contact our support team for a swift resolution.
-
-With Love
-Fund'r, For Traders.
-
-    </p>
         
+      </p>
+      <p>
+        Request Type: Payout
+        Payout Amount: {{amount}}
+        Payment Method: {{method}}
+        Wallet Address: {{address}}
+        Status: Pending Approval
+
+</p>
+<p>
+ Your performance will be promptly reviewed and an update will be provided within 6hrs.
+If you do not recognize this request, kindly contact support immediately.
+
+  
+ 
+
+</p>
+<p>
+ With Love
+  Fund'r, For Traders.
+</p>
     </div>
   </div>
 </div>

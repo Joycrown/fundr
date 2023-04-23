@@ -17,6 +17,10 @@ class ScaleRequest(BaseModel):
     capital:Optional[str]
     type:str
     current_capital:str
+    metatrader_password: str
+    mt_login: str
+    mt_server:str
+    analytics:str
     scale_to:str
     status_scale: Optional[str]
 
@@ -31,6 +35,10 @@ class ScaleRequestOut(BaseModel):
     type:str
     capital:str
     scale_to:str
+    metatrader_password: str
+    mt_login: str
+    mt_server:str
+    analytics:str
     serial_no:int
     created_at:datetime
     status_scale:str

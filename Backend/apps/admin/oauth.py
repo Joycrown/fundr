@@ -15,6 +15,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
+"""
+for admin enrollment
+"""
+
 
 def create_access_token(data: dict):
     to_encode= data.copy()
@@ -25,7 +29,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def verify_access_token(token:str, credentials_exception ):
+def verify_access_token_admin_enroll(token:str, credentials_exception ):
     try:
 
         payload = jwt.decode(token,SECRET_KEY,algorithms=ALGORITHM)
@@ -42,19 +46,20 @@ def verify_access_token(token:str, credentials_exception ):
 
 
     
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user_admin_enroll(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
     detail=f"couldnt validate credentials", headers={"WWW-Authenticate":"Bearer"})
-    token = verify_access_token(token, credentials_exception)
+    token = verify_access_token_admin_enroll(token, credentials_exception)
     user = db.query(dbmodel.Admin).filter(dbmodel.Admin.email == token.email).first()
     return user 
 
 
 
-
-def verify_access_token_login(token:str, credentials_exception ):
+"""
+for admin Login
+"""
+def verify_access_token_admin_login(token:str, credentials_exception ):
     try:
-
         payload = jwt.decode(token,SECRET_KEY,algorithms=ALGORITHM)
         email = payload.get("email")
         id= payload.get("id")
@@ -69,9 +74,9 @@ def verify_access_token_login(token:str, credentials_exception ):
 
 
     
-def get_current_user_login(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user_admin_login(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
     detail=f"couldnt validate credentials", headers={"WWW-Authenticate":"Bearer"})
-    token = verify_access_token_login(token, credentials_exception)
+    token = verify_access_token_admin_login(token, credentials_exception)
     user = db.query(dbmodel.Admin).filter(dbmodel.Admin.email == token.email).first()
     return user 

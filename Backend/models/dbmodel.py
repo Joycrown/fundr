@@ -1,7 +1,8 @@
 from config.database import Base
-from sqlalchemy import Column, Integer, String,Numeric
+from sqlalchemy import Column, Integer, String,Numeric,ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
+from sqlalchemy.orm import relationship
 
 
 
@@ -9,7 +10,6 @@ from sqlalchemy.sql.expression import text
 
 class Users(Base):
     __tablename__ = 'users'
-
     
     id = Column(Integer, primary_key=True, nullable=False)
     first_name = Column(String, nullable=False)
@@ -31,11 +31,15 @@ class Users(Base):
     analytics = Column(String,nullable=False,server_default='N/A')
     status_upgrade = Column(String,nullable=False,server_default='N/A')
     status_scale = Column(String,nullable=False,server_default='N/A')
+    status_payout = Column(String,nullable=False,server_default='N/A')
     upgrading_reason = Column(String,nullable=False,server_default='N/A')
     scaling_reason = Column(String,nullable=False,server_default='N/A')
+    account_id_meta = Column(String,nullable=False,server_default='N/A')
+    type_meta = Column(String,nullable=False,server_default='N/A')
     transaction_id = Column(String,nullable=False)
     transaction_link = Column(String,nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
+    
     
 
     
@@ -50,6 +54,9 @@ class Requests(Base):
     email = Column(String,nullable=False)
     country = Column(String,nullable=False)
     phone_no = Column(Numeric,nullable=False)
+    password = Column(String,nullable=False,server_default='N/A')
+    transaction_id = Column(String,nullable=False,server_default='N/A')
+    transaction_link = Column(String,nullable=False,server_default='N/A')
     role = Column(String,nullable=False)
     capital = Column(String,nullable=False)
     mt_login = Column(String,nullable=False,server_default='N/A')
@@ -79,6 +86,8 @@ class Payouts(Base):
 
     serial_no = Column(Integer, primary_key=True, nullable=False)
     id = Column(Integer, nullable=False)
+    first_name = Column(String, nullable=False,server_default="N/A")
+    last_name = Column(String,nullable=False,server_default="N/A")
     status =Column(String, nullable=False)
     payment_method = Column(String, nullable=False )
     amount = Column(String, nullable=False)

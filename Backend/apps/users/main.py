@@ -2,13 +2,12 @@ from fastapi import  Depends,HTTPException,status,APIRouter,Response
 from models import dbmodel
 from config.database import get_db
 from sqlalchemy.orm import Session 
+from sqlalchemy import or_
 from schemas.users import user
 from utlis.users import utilis
 from apps.users import oauth
-from fastapi_pagination import Page, paginate
-from utlis.users.email import send_mail, password_rest_email, rejected_payment_email
-from . import oauth
-from apps.admin import oauth
+from utlis.users.email import account_purchased, password_rest_email
+from apps.users import oauth
 
 router= APIRouter(
     tags=["Users"]
@@ -31,93 +30,27 @@ async def new_user(user:user.User, db: Session= Depends(get_db)):
   db.add(new_account)
   db.commit()
   db.refresh(new_account)
-  await send_mail("Registration Successful", user.email, {
-    "title": "Registration Successful",
-    "name": user.last_name
+  await account_purchased("Registration Successful", user.email, {
+    "title": "Account Purchase Successful",
+    "name": user.first_name,
+    "account": user.capital,
   })
   return  new_account
 
 
-"""
-Admin route
-To send User's details from liquidity provider to their account on fundr
-"""
-@router.put('/user_details')
-async def update_user(account: user.userUpdate , db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user)):
-  account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id).first()
-  if account_details == None:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
-  account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
-  if account_details.first().status == "Rejected":
-     raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=f"User with id: {account.id} payment has not been verified")
-  account_details.update({"mt_login":account.mt_login,"mt_server":account.mt_server,
-  "metatrader_password":account.metatrader_password, "analytics":account.analytics,"status":"Completed"},synchronize_session=False)
-  db.commit()
-  return Response(status_code=status.HTTP_202_ACCEPTED)
 
 
 """
-Admin route
-To update User's status for account 
-purchasing after sending their details 
-for purchase on liquidity provider
+User route
+To load signed in user details
 """
-@router.put('/status')
-async def update_status(account: user.userStatusUpdate, db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user)):
-  account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id).first()
-  if account_details == None:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
-  account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
-  account_details.update({"status":account.status},synchronize_session=False)
-  db.commit()
-  return Response(status_code=status.HTTP_202_ACCEPTED)
-  
-
-"""
-Admin route
-To reject user's account purchase if found guilty or an error is noticed
-"""
-@router.post('/reject')
-async def reject_payment(account:user.RejectPayment,db: Session = Depends(get_db),current_user: int = Depends(oauth.get_current_user)):
-  check_account = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id).first()
-  if check_account == None:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {account.id} does not exist")
-  if check_account != account.email:
-    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"User Email not a match")
-  account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
-  account_details.update({"status":"Rejected","reason":account.reason},synchronize_session=False)
- 
-  db.commit()
-  await rejected_payment_email("Payment Rejected", account.email, {
-    "title": "Registration Successful",
-    "name": check_account.last_name,
-    "reason": account.reason
-  })
-  return Response(status_code=status.HTTP_208_ALREADY_REPORTED)
+@router.get('/current_user/me', response_model=user.UserOut)
+async def get_current_user(db: Session = Depends(get_db),current_user: user.UserOut = Depends(oauth.get_current_user)):
+  if not current_user:
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No user found with the given search criteria")
+  return current_user
 
 
-
-"""
-Admin route
-To get all users on fundr system
-"""
-@router.get('/user/', response_model=list[user.UserOut])
-def get_user(db: Session = Depends(get_db)):
-  user= db.query(dbmodel.Users).order_by(dbmodel.Users.created_at).all()
-  return user
-
-
-
-"""
-Admin route
-To get all requests made by a user on fundr
-"""
-@router.get('/requests/{id}',response_model=Page[user.RequestOut])
-async def get_payout_history(id: int, db: Session = Depends(get_db)):
-  account_payout_history = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == id).all()
-  if not account_payout_history:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No request history for id: {id} yet")
-  return paginate(account_payout_history)
 
 
 
@@ -130,8 +63,8 @@ To reset users password
 async def password_rest(email: user.passwordRest, db: Session = Depends(get_db)):
   email_exist= db.query(dbmodel.Users).filter(dbmodel.Users.email == email.email).first()
   if email_exist is not None :
-    token = oauth.create_access_token(data={"user_id": email_exist.id, "admin": email_exist.is_admin})
-    reset_link = f"http://localhost:8000/?token={token}"
+    token = oauth.create_access_token(data={"user_id": email_exist.id, "email": email_exist.email})
+    reset_link = f"http://localhost:3001/password/{token}"
     await password_rest_email("Password Reset", email_exist.email,{
       "title": "Password Rest",
       "name": email_exist.last_name,
@@ -156,5 +89,28 @@ async def password(token:str,new_password:user.password, db: Session = Depends(g
   user_update= db.query(dbmodel.Users).filter(dbmodel.Users.id == user.id)
   user_update.update({"password": update_password},synchronize_session=False)
   db.commit()
-  
   return Response(status_code=status.HTTP_202_ACCEPTED)
+
+"""
+User route
+To change user's password from profile
+"""
+
+@router.put('/change_password')
+async def update_user_password(details:user.ChangePassword,db: Session = Depends(get_db),current_user: user.UserOut = Depends(oauth.get_current_user)):
+  check_user = db.query(dbmodel.Users).filter(dbmodel.Users.id == current_user.id).first()
+  check_password= utilis.verify(details.current_password,current_user.password)
+  if not check_password:
+     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"current password not a match")
+  hash_new_password= utilis.hash(details.new_password)
+  user_update= db.query(dbmodel.Users).filter(dbmodel.Users.id == current_user.id)
+  user_update.update({"password": hash_new_password},synchronize_session=False)
+  db.commit()
+  return Response(status_code=status.HTTP_202_ACCEPTED)
+
+
+"""
+Payouts 
+"""
+
+

@@ -10,6 +10,8 @@ class PayoutRequest(BaseModel):
     id: int
     type: str
     amount: str
+    first_name:Optional[str]
+    last_name:Optional[str]
     payment_method:str
     wallet_address: str
     email: Optional[EmailStr]
@@ -42,8 +44,12 @@ class PayoutOut(BaseModel):
     id: int
     type: str
     amount: str
+    first_name:str
+    serial_no:int
+    last_name:str
     payment_method:str
     wallet_address: str
+    profit_share: str
     email: Optional[EmailStr]
     analytics: Optional[str]
     status: Optional[str]
