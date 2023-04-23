@@ -50,6 +50,7 @@ watchfiles = "==0.18.0"
 websockets = "==10.3"
 fastapi-mail = "*"
 passlib = {extras = ["bcrypt"], version = "*"}
+fastapi-pagination = "*"
 
 [dev-packages]
 
