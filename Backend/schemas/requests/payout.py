@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class PayoutRequest(BaseModel):
-    id: int
+    id: str
     type: str
     amount: str
     first_name:Optional[str]
@@ -20,13 +20,13 @@ class PayoutRequest(BaseModel):
 
 
 class PayoutReject(BaseModel):
-    id:int
+    id:str
     email:EmailStr
     reason:str
 
 
 class PayoutConfirm(BaseModel):
-    id: int
+    id: str
     first_name: Optional[str]
     last_name:Optional[str]
     amount_requested:Optional[str]
@@ -41,7 +41,7 @@ class PayoutConfirm(BaseModel):
 
 
 class PayoutOut(BaseModel):
-    id: int
+    id: str
     type: str
     amount: str
     first_name:str

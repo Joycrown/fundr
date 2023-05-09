@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class ScaleRequest(BaseModel):
-    id:int
+    id:str
     first_name:Optional[str]
     last_name:Optional[str]
     email:Optional[EmailStr]
@@ -27,7 +27,7 @@ class ScaleRequest(BaseModel):
 
 
 class ScaleRequestOut(BaseModel):
-    id: int
+    id: str
     first_name:str
     last_name:str
     email:EmailStr
@@ -49,7 +49,7 @@ class ScaleRequestOut(BaseModel):
 
 
 class ScaleStatus(BaseModel):
-    id:int
+    id:str
     first_name:str
     last_name:str
     email:EmailStr
@@ -61,14 +61,14 @@ class ScaleStatus(BaseModel):
 
 
 class ScaleReject(BaseModel):
-    id: int
+    id: str
     type: str
     reason:str
     email:EmailStr
 
 
 class ScaleUpdate(BaseModel):
-    id: int
+    id: str
     email:EmailStr
     capital:str
    

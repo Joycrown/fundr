@@ -34,7 +34,7 @@ async def create_admin (admin: CreateAdmin, db: Session= Depends(get_db),):
     # if current_user.role != "Super Admin" :
     #     raise HTTPException(status_code=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, detail=f"You dont have access to this role")
     create_token = create_access_token({"email":admin.email,"role":admin.role})
-    link = f"http://localhost:3000/admin/signup/{create_token}"
+    link = f"https://admin.myfundr.co/admin/signup/{create_token}"
     new_account = dbmodel.Admin(**admin.dict())
     db.add(new_account)
     db.commit()

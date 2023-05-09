@@ -12,21 +12,28 @@ from config.database import Base
 
 
 class User(BaseModel):
-    
     first_name: str
     last_name: str
-    email: EmailStr
+    email: Optional[EmailStr]
     country: str
     phone_no: int
+    transaction_id: Optional[str]
+    transaction_link: Optional[str]
+    capital:Optional[str]
+    password:str
+
+class UserCryptochil(BaseModel):
+   
+    email: EmailStr
     transaction_id: str
     transaction_link: str
     capital:str
-    password:str
+   
 
 
     
 class PaymentReceivedOut(BaseModel):
-    id:int
+    id:str
     first_name: str
     last_name: str
     email: EmailStr
@@ -44,7 +51,7 @@ class PaymentReceivedOut(BaseModel):
     
 class RequestOut(BaseModel):
     serial_no: int
-    id: int
+    id: str
     first_name:str
     last_name:str
     email:str
@@ -64,7 +71,7 @@ class RequestOut(BaseModel):
         orm_mode= True
 
 class UserOut(BaseModel):
-    id: int
+    id: str
     first_name: str
     last_name: str
     account_id_meta : str
@@ -99,7 +106,7 @@ class UserOut2(BaseModel):
         orm_mode= True
 
 class userStatusUpdate(BaseModel):
-    id: int
+    id: str
     first_name: str
     last_name: str
     email: EmailStr
@@ -114,7 +121,7 @@ class userStatusUpdate(BaseModel):
 
 
 class userUpdate(BaseModel):
-    id: int
+    id: str
     first_name:str
     last_name:str
     email:EmailStr
@@ -129,7 +136,7 @@ class userUpdate(BaseModel):
     analytics: str
 
 class RejectPayment(BaseModel):
-    id: int
+    id: str
     reason:str
     email:EmailStr
     status: Optional [str]

@@ -10,8 +10,10 @@ from sqlalchemy.orm import relationship
 
 class Users(Base):
     __tablename__ = 'users'
-    
-    id = Column(Integer, primary_key=True, nullable=False)
+
+
+    # serial_no = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    id = Column(String, unique=True,primary_key=True, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String,nullable=False)
     email = Column(String,nullable=False, unique=True)
@@ -35,9 +37,9 @@ class Users(Base):
     upgrading_reason = Column(String,nullable=False,server_default='N/A')
     scaling_reason = Column(String,nullable=False,server_default='N/A')
     account_id_meta = Column(String,nullable=False,server_default='N/A')
+    transaction_id =Column(String, unique=True, nullable=False)
+    transaction_link  = Column(String, nullable=False)
     type_meta = Column(String,nullable=False,server_default='N/A')
-    transaction_id = Column(String,nullable=False)
-    transaction_link = Column(String,nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
     
     
@@ -112,4 +114,17 @@ class Admin(Base):
     phone_no = Column(Numeric, nullable=False,unique=True)
     password = Column(String, nullable=False ,server_default="N/A")
     role  = Column(String, nullable=False, server_default="N/A")
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
+
+
+
+
+class Cryptochil(Base):
+    __tablename__='Cryptochil'
+
+    id =Column(Integer, primary_key=True, nullable=False)
+    transaction_id =Column(String, unique=True, nullable=False)
+    email  = Column(String, nullable=False,unique=True)
+    amount = Column(Integer, nullable=False)
+    profile_id  = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))

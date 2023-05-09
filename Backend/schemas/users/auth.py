@@ -18,7 +18,12 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: int 
+    id: str
+    email: EmailStr
+
+
+class CryptochilData(BaseModel):
+    id: str
     email: EmailStr
 
 

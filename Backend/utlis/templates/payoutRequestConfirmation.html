@@ -1,31 +1,61 @@
+
+<!DOCTYPE html>
 <html>
-<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif;">
-<div style="width: 100%; background: #efefef; border-radius: 10px; padding: 10px;">
-  <div style="margin: 0 auto; width: 90%; text-align: center;">
-    <h1 style="background-color: rgba(0, 53, 102, 1); padding: 5px 10px; border-radius: 5px; color: white;">{{ title }}</h1>
-    <div style="margin: 30px auto; background: white; width: 40%; border-radius: 10px; padding: 50px; text-align: center;">
-      <h3 style="margin-bottom: 100px; font-size: 24px;">Hi {{ name }}!</h3>
-      <p style="margin-bottom: 30px;"> your request has been completed and your profits have been paid into your provided address. Here are  the details.
-
-
-
-      </p>
-      <p>
-        Amount Requested:{{amount}}
-        Net Payout: {{share}}
-        Payment Method: {{method}}
-        Wallet Address: {{address}}
-        Status: Completed 
-
-
-</p>
-
-<p>
- With Love
-  Fund'r, For Traders.
-</p>
-    </div>
-  </div>
-</div>
+<head>
+	<title>Account Purchase Complete</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			font-family: Arial, sans-serif;
+		}
+		.container {
+			max-width: 600px;
+			margin: 0 auto;
+			background-color: #ffffff;
+			padding: 20px;
+		}
+		h1 {
+			font-size: 24px;
+			font-weight: bold;
+			margin: 0 0 20px 0;
+		}
+		p {
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0 0 10px 0;
+		}
+		@media screen and (max-width: 600px) {
+			.container {
+				width: 100%;
+				padding: 10px;
+			}
+			h1 {
+				font-size: 20px;
+			}
+			p {
+				font-size: 14px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>{{ title }}</h1>
+		<p>Hi {{ name }}!</p>
+		<p>Your request has been completed and your profits have been paid into your provided address. Here are  the details.</p>
+        
+		<p>  Amount Requested:{{amount}}</p>
+		<p>Net Payout: {{share}}</p>
+		<p> Payment Method: {{method}}</p>
+		<p> Wallet Address: {{address}}</p>
+		<p>Status: Completed </p>
+		
+		<p>With Love</p>
+		<p>The Fund'r Team, For Traders.</p>
+	</div>
 </body>
 </html>

@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class UpgradeRequest(BaseModel):
-    id:int
+    id:str
     first_name:Optional[str]
     last_name:Optional[str]
     email:Optional[EmailStr]
@@ -23,7 +23,7 @@ class UpgradeRequest(BaseModel):
 
 
 class UpgradeRequestOut(BaseModel):
-    id: int
+    id: str
     first_name:str
     last_name:str
     email:EmailStr
@@ -41,7 +41,7 @@ class UpgradeRequestOut(BaseModel):
 
 
 class UpgradeStatus(BaseModel):
-    id:int
+    id:str
     first_name:str
     last_name:str
     email:EmailStr
@@ -53,14 +53,14 @@ class UpgradeStatus(BaseModel):
 
 
 class UpgradeReject(BaseModel):
-    id: int
+    id: str
     type: str
     reason:str
     email:EmailStr
 
 
 class UpgradeUpdate(BaseModel):
-    id: int
+    id: str
     email:EmailStr
     phase:str
    

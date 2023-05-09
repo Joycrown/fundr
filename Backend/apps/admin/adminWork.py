@@ -4,14 +4,11 @@ from config.database import get_db
 from sqlalchemy.orm import Session 
 from sqlalchemy import or_
 from schemas.users import user
-# from schemas.requests.payout import PayoutOut
-# from schemas.admin import admin
-# from utlis.users import utilis
-# from apps.users import oauth
+
 from datetime import datetime
 from fastapi_pagination import Page, paginate
-from utlis.users.email import account_purchased, password_rest_email, rejected_payment_email,account_confirmation,account_setup
-# from apps.users.oauth import get_current_user
+from utlis.users.email import  rejected_payment_email,account_confirmation,account_setup
+
 from apps.admin.oauth import get_current_user_admin_login
 
 router= APIRouter(
