@@ -14,6 +14,17 @@ async def account_purchased(subject: str, email_to: str, body:dict):
     fm = FastMail(conf)
     await fm.send_message(message, template_name="accountPurchased.html")
 
+# Send Email after invoice generation
+async def account_paid_for(subject: str, email_to: str, body:dict):
+    message= MessageSchema(
+        subject=subject,
+        recipients= [email_to],
+        template_body= body,
+        subtype="html"
+    )
+    fm = FastMail(conf)
+    await fm.send_message(message, template_name="accountPaidFor.html")
+
 
 # Send Email for account confirmation
 async def account_confirmation(subject: str, email_to: str, body:dict):

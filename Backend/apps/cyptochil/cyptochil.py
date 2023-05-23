@@ -5,7 +5,7 @@ from apps.cyptochil.cryptochilSignUp import create_access_token
 from config.database import get_db
 from sqlalchemy.orm import Session 
 from sqlalchemy import or_
-from utlis.users.email import account_purchased, password_rest_email
+from utlis.users.email import account_purchased, account_paid_for
 from schemas.users import user
 from typing import Optional
 import time
@@ -57,13 +57,15 @@ async def cryptochil_database(id:str, email:str, amount:str, profile_id:str, db:
     new_account = dbmodel.Cryptochil(transaction_id=id, email=email, amount=amount, profile_id=profile_id)
     create_token= create_access_token(data={"transaction_id": id, "email": email})
     signup_link = f"https://myfundr.co/signup/{create_token}"
+    invoice_link = f"https://cryptochill.com/invoice/{id}"
     db.add(new_account)
     db.commit()
     db.refresh(new_account)
-    await password_rest_email("Registration Successful", email,{
+    await account_paid_for("Invoice Generated", email,{
       "title": "Account Purchase Successful",
       "name": email,
-      "reset_link": signup_link
+      "reset_link": signup_link,
+      "invoice_link": invoice_link
     })
 
     return  new_account

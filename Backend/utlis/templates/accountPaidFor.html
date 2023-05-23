@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Account Purchase Complete</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+			font-family: Arial, sans-serif;
+		}
+		.container {
+			max-width: 600px;
+			margin: 0 auto;
+			background-color: #ffffff;
+			padding: 20px;
+		}
+		.button {
+			display: block;
+			width: 100%;
+			background-color: #2ecc71;
+			color: #ffffff;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+			padding: 10px 0;
+			text-decoration: none;
+			border-radius: 5px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+		.button-invoice {
+			display: block;
+			width: 100%;
+			background-color: #0526f8;
+			color: #ffffff;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+			padding: 10px 0;
+			text-decoration: none;
+			border-radius: 5px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+		}
+		h1 {
+			font-size: 24px;
+			font-weight: bold;
+			margin: 0 0 20px 0;
+		}
+		p {
+			font-size: 16px;
+			line-height: 1.5;
+			margin: 0 0 10px 0;
+		}
+		@media screen and (max-width: 600px) {
+			.container {
+				width: 100%;
+				padding: 10px;
+			}
+			h1 {
+				font-size: 20px;
+			}
+			p {
+				font-size: 14px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>{{ title }}</h1>
+		<p>Hi {{ name }}!</p>
+		<p>Your invoice has been generated.</p>
+		<a href="{{ invoice_link }}" class="button-invoice">Sign Up</a>
+		<p> Complete the transaction before the stipulated time and complete your signup.Link below</p>
+		<a href="{{ reset_link }}" class="button">Sign Up</a>
+		<p>If you have any questions or concerns, please contact our customer support team at support@myfundr.co.</p>
+		<p>With Love,</p>
+		<p>The Fund'r Team, For Traders.</p>
+	</div>
+</body>
+</html>
