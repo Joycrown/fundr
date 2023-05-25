@@ -52,15 +52,15 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
     user.capital = 200000
   custom_id = generate_custom_id("FR", 5)
   new_account = dbmodel.Users(id=custom_id, **user.dict())
-  # db.add(new_account)
-  # db.commit()
-  # db.refresh(new_account)
-  # await account_purchased("Registration Successful", user.email, {
-  #   "title": "Account Purchase Successful",
-  #   "name": user.first_name,
-  #   "account": user.capital,
-  #   "id": new_account.id
-  # })
+  db.add(new_account)
+  db.commit()
+  db.refresh(new_account)
+  await account_purchased("Registration Successful", user.email, {
+    "title": "Account Purchase Successful",
+    "name": user.first_name,
+    "account": user.capital,
+    "id": new_account.id
+  })
   return  new_account
 
 
