@@ -36,6 +36,9 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   check_phone_no = db.query(dbmodel.Users).filter(dbmodel.Users.phone_no == user.phone_no).first()
   if check_phone_no : 
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"Phone Number already in use")
+  invoice= cryptochill_api_request(f'invoices/{check_user.id}', method='GET')
+  if invoice['result']['status'] != 'confirmed':
+    raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED,detail=f"Payment not confirmed yet")
   custom_id = generate_custom_id("FR", 5)
   id = custom_id
   user.capital = 100000
