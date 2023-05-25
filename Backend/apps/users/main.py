@@ -23,7 +23,7 @@ def generate_custom_id(prefix: str, n_digits: int) -> str:
     random_digits = ''.join([str(random.randint(0,9)) for i in range(n_digits)])
     return f"{prefix}{random_digits}"
 
-@router.post('/signup/', status_code=status.HTTP_201_CREATED, response_model=user.UserOut)
+@router.post('/signup', status_code=status.HTTP_201_CREATED, response_model=user.UserOut)
 async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   hashed_password= utilis.hash(user.password)
   user.password = hashed_password
