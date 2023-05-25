@@ -55,12 +55,12 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   # db.add(new_account)
   # db.commit()
   # db.refresh(new_account)
-  await account_purchased("Registration Successful", user.email, {
-    "title": "Account Purchase Successful",
-    "name": user.first_name,
-    "account": user.capital,
-    "id": new_account.id
-  })
+  # await account_purchased("Registration Successful", user.email, {
+  #   "title": "Account Purchase Successful",
+  #   "name": user.first_name,
+  #   "account": user.capital,
+  #   "id": new_account.id
+  # })
   return  new_account
 
 
