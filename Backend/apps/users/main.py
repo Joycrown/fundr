@@ -39,28 +39,19 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   invoice= cryptochill_api_request(f'invoices/{check_user.id}', method='GET')
   if invoice['result']['status'] != 'confirmed':
     raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED,detail=f"Payment not confirmed yet")
-  custom_id = generate_custom_id("FR", 5)
-  id = custom_id
-  user.capital = 100000
   user.transaction_id = check_user.id
   user.email = check_user.email
-  return ("all good")
-  # invoice= cryptochill_api_request(f'invoices/{check_user.id}', method='GET')
-  # if invoice['result']['status'] != 'confirmed':
-  #   raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED,detail=f"Payment not confirmed yet")
-  # user.transaction_id = check_user.id
-  # user.email = check_user.email
-  # user.transaction_link = invoice['result']['profile_id']
-  # if invoice['result']['amount']['requested']['amount'] == '170':
-  #   user.capital = 25000
-  # if invoice['result']['amount']['requested']['amount'] == "270":
-  #   user.capital = 50000
-  # if invoice['result']['amount']['requested']['amount'] == "470":
-  #   user.capital = 100000
-  # if invoice['result']['amount']['requested']['amount'] == "850":
-  #   user.capital = 200000
-  # custom_id = generate_custom_id("FR", 5)
-  # new_account = dbmodel.Users(id=custom_id, **user.dict())
+  user.transaction_link = invoice['result']['profile_id']
+  if invoice['result']['amount']['requested']['amount'] == '170':
+    user.capital = 25000
+  if invoice['result']['amount']['requested']['amount'] == "270":
+    user.capital = 50000
+  if invoice['result']['amount']['requested']['amount'] == "470":
+    user.capital = 100000
+  if invoice['result']['amount']['requested']['amount'] == "850":
+    user.capital = 200000
+  custom_id = generate_custom_id("FR", 5)
+  new_account = dbmodel.Users(id=custom_id, **user.dict())
   # db.add(new_account)
   # db.commit()
   # db.refresh(new_account)
@@ -70,7 +61,7 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   #   "account": user.capital,
   #   "id": new_account.id
   # })
-  # return  new_account
+  return  new_account
 
 
 
