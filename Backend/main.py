@@ -15,7 +15,7 @@ from apps.cyptochil import cyptochil
 
 app = FastAPI()
 
-origins= ["*"]
+origins = ["https://myfundr.co"]
 
 app.add_middleware(
     CORSMiddleware,
