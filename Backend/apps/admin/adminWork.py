@@ -116,7 +116,7 @@ Admin route
 To get a single user on fundr by id
 """
 @router.get('/user/{id}',response_model=user.UserOut)
-async def get_user(id: int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
+async def get_user(id: str, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   user_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == id).first()
   if not user_details:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No user with: {id} found")
@@ -319,7 +319,7 @@ Admin route
 To get a single upgrade request made by a user on fundr
 """
 @router.get('/user/requests/serial_no/{id}',response_model=user.RequestOut)
-async def get_particular_request_with_serial_no(id: int, serial_no:int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
+async def get_particular_request_with_serial_no(id: str, serial_no:int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   account_payout_history = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == id).all()
   if not account_payout_history:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No request history for id: {id} yet")
@@ -332,7 +332,7 @@ Admin route
 To get a particular upgrade request made by a user on fundr with
 """
 @router.get('/requests/{id}',response_model=Page[user.RequestOut])
-async def get_a_user_request_history(id: int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
+async def get_a_user_request_history(id: str, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   account_payout_history = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == id).all()
   if not account_payout_history:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No request history for id: {id} yet")
