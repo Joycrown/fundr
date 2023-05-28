@@ -65,7 +65,6 @@ async def admin_signup (token:str, details:AdminSignUp,db: Session = Depends(get
     if user.email != details.email:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"No Admin Right given to {details.email}")
     user_update= db.query(dbmodel.Admin).filter(dbmodel.Admin.email == user.email)
-    print(user_update)
     user_update.update({"password": password_hash},synchronize_session=False)
     db.commit()
     

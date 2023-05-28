@@ -9,6 +9,12 @@ class Settings(BaseSettings):
     database_password: str
     database_name:str
     database_username:str
+    database_hostname_dev: str
+    database_port_dev: str
+    database_password_dev: str
+    database_name_dev:str
+    database_username_dev:str
+    database_production_server:str
     secret_key:str
     algorithm:str
     access_token_expire_minutes: int
