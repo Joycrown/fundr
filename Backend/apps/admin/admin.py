@@ -54,7 +54,7 @@ async def create_admin (admin: CreateAdmin, db: Session= Depends(get_db),):
 Admin route
 Admin signup after invitation
 """
-@router.put('/admin/signup')
+@router.put('/admin/signup/')
 async def admin_signup (token:str, details:AdminSignUp,db: Session = Depends(get_db)):
     password_hash = utilis.hash(details.password)
     credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
