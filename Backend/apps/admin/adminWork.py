@@ -141,7 +141,7 @@ async def get_all_users_payment_request_pending( db: Session = Depends(get_db),c
 Admin route
 To get all completed or rejected users request/payment on fundr 
 """
-@router.get("/user/users/completed", response_model=Page[user.RequestOut])
+@router.get("/user/users/completed/", response_model=Page[user.RequestOut])
 async def get_all_users_payment_or_request_completed_or_rejected( search_query: str = Query(None, min_length=3, max_length=100),filter_query: str = Query(None), start_date: str = Query(None),
               end_date: str = Query(None), db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   query = db.query(dbmodel.Requests).filter(or_(
