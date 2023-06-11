@@ -119,6 +119,30 @@ def delete_user(id: int, db: Session = Depends(get_db), current_user: int = Depe
 
 
 
+"""
+Admin route
+To delete an Admin by a SuperAdmin
+"""
+@router.delete('/admin/{id}', status_code=status.HTTP_204_NO_CONTENT )
+def delete_admin(id: int, db: Session = Depends(get_db), current_user: int = Depends(get_current_user_admin_login)):
+  if current_user.role == "Super Admin" :
+    user= db.query(dbmodel.Admin).filter(dbmodel.Admin.id == id)
+    if user.first() == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {id} does not exist")
+    user.delete(synchronize_session=False)
+    db.commit()
+  return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+"""
+Admin route
+To get list of all Admin by SuperAdmin
+"""
+@router.get('/admin')
+def get_all_admin(db: Session = Depends(get_db), current_user: int = Depends(get_current_user_admin_login)):
+  if current_user.role == "Super Admin" :
+    user= db.query(dbmodel.Admin).all()
+  return user
 
 """
 Admin route
