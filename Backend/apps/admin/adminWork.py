@@ -235,7 +235,7 @@ def get_all_user(search_query: str = Query(None, min_length=3, max_length=100),f
 Admin route
 To get all users completed status on fundr system
 """
-@router.get("/user/status/completed", response_model=Page[user.UserOut])
+@router.get("/user/status/completed/", response_model=Page[user.UserOut])
 def get_all_user_status_completed(search_query: str = Query(None, min_length=3, max_length=100),filter_query: str = Query(None), start_date: str = Query(None),
               end_date: str = Query(None), db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
     query = db.query(dbmodel.Users).filter(or_(dbmodel.Users.status == "Completed", 
