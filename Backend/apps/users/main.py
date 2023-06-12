@@ -41,8 +41,7 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
     raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED,detail=f"Payment not confirmed yet")
   user.transaction_id = check_user.id
   user.email = check_user.email
-  user.transaction_link = invoice['result']['profile_id']
-  print(invoice['result']['amount']['requested']['amount'])
+  user.transaction_link = invoice['result']['transactions'][0]['url']
   if invoice['result']['amount']['requested']['amount'] == '1':
     user.capital = 25000
   if invoice['result']['amount']['requested']['amount'] == "270":
@@ -64,6 +63,7 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   })
   return  new_account
 
+  
 
 
 
