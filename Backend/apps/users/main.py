@@ -107,7 +107,7 @@ async def password_rest(email: user.passwordRest, db: Session = Depends(get_db))
 User route
 To set new user's password
 """
-@router.put('/set_password' )
+@router.put('/set_password/' )
 async def password(token:str,new_password:user.password, db: Session = Depends(get_db)):
   update_password = utilis.hash(new_password.new_password)
   credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, 
