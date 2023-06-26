@@ -134,6 +134,8 @@ class userUpdate(BaseModel):
     metatrader_password:str
     mt_server:str
     analytics: str
+    type_meta: str
+    account_id_meta: int
 
 class RejectPayment(BaseModel):
     id: str

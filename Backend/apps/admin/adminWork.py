@@ -53,7 +53,7 @@ async def update_user(account: user.userUpdate , db: Session = Depends(get_db),c
   if account_details.first().status == "Rejected":
      raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=f"User with id: {account.id} payment has not been verified")
   account_details.update({"mt_login":account.mt_login,"mt_server":account.mt_server,
-  "metatrader_password":account.metatrader_password, "analytics":account.analytics,"status":"Completed"},synchronize_session=False)
+  "metatrader_password":account.metatrader_password,"type_meta":account.type, "account_id_meta":account.account_id_meta, "analytics":account.analytics,"status":"Completed"},synchronize_session=False)
   db.commit()
   await account_setup(" Account Setup Complete", account.email, {
     "title": " Account Setup Complete",
