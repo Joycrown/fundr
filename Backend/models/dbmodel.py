@@ -1,5 +1,5 @@
 from config.database import Base
-from sqlalchemy import Column, Integer, String,Numeric,ForeignKey
+from sqlalchemy import Column, Integer, String,Numeric,Float
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
@@ -39,6 +39,7 @@ class Users(Base):
     account_id_meta = Column(String,nullable=False,server_default='N/A')
     transaction_id =Column(String, unique=True, nullable=False)
     transaction_link  = Column(String, nullable=False)
+    profit_split  = Column(Float, nullable=False, default= 0)
     type_meta = Column(String,nullable=False,server_default='N/A')
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default= text('now()'))
     
@@ -94,7 +95,8 @@ class Payouts(Base):
     payment_method = Column(String, nullable=False )
     amount = Column(String, nullable=False)
     analytics = Column(String, nullable=False)
-    profit_share = Column(String, nullable=False,server_default="N/A")
+    profit_share = Column(Float, nullable=False, default=0)
+    payable_amount= Column(Float, nullable=False, default=0)
     reason = Column(String, nullable=False,server_default="N/A")
     email = Column(String,nullable=False)
     wallet_address = Column(String, nullable=False)

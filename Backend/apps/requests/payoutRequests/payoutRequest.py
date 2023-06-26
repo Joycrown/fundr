@@ -38,6 +38,8 @@ async def send_payout_request(request: PayoutRequest, db: Session = Depends(get_
     request.last_name = account_details.first().last_name
     request.email = account_details.first().email
     request.analytics = account_details.first().analytics
+    request.profit_share = account_details.first().profit_split
+    request.payable_amount = request.amount * request.profit_share
     request.status = "Received"
     new_request = dbmodel.Payouts(**request.dict())
     account_details.update ({"status_payout":"Sent"},synchronize_session=False)
@@ -96,14 +98,14 @@ async def accept_payout_request(account: PayoutConfirm , db: Session = Depends(g
      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User with id: {account.id} request has been rejected")
   else:
     payout_details.first().status = "Pending"
-    payout_details.first().profit_share = account.profit_split
+    # payout_details.first().profit_share = account.profit_split
     
     account_details.update ({"status_payout":"Pending"},synchronize_session=False)
     db.commit()
     await payout_request_processing("Update! Payout Request Approved", account_details.first().email, {
     "title": "Update! Payout Request Approved",
     "amount":  account.amount_requested,
-    "share":  account.profit_split
+    "share":  account.payable_amount
     })
     
     
@@ -125,7 +127,7 @@ async def confirm_payout_request(account: PayoutConfirm , db: Session = Depends(
      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User with id: {account.id} request hasnt been accepted")
   else:
     payout_details.first().status = "Completed"
-    payout_details.first().profit_share = account.profit_split
+    # payout_details.first().profit_share = account.profit_split
     account_details.update ({"status_payout":"Completed"},synchronize_session=False)
     
     db.commit()

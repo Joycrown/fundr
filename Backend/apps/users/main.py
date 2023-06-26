@@ -43,6 +43,10 @@ async def new_user(user:user.User, token:str, db: Session= Depends(get_db)):
   user.email = check_user.email
   user.capital = 200000
   user.transaction_link = "http://localhost:3000"
+  if user.capital <= 200000 :
+    user.profit_split = 0.7
+  else :
+    user.profit_split = 0.6
   # user.transaction_link = invoice['result']['transactions'][0]['url']
   # if invoice['result']['amount']['requested']['amount'] == '1':
   #   user.capital = 25000

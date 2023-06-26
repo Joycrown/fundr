@@ -20,7 +20,9 @@ class User(BaseModel):
     transaction_id: Optional[str]
     transaction_link: Optional[str]
     capital:Optional[str]
+    profit_split:Optional[int]
     password:str
+
 
 class UserCryptochil(BaseModel):
    

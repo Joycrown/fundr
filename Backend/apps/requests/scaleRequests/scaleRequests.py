@@ -43,7 +43,10 @@ async def send_scale_request(request: ScaleRequest, db: Session = Depends(get_db
     request.analytics = account_details.analytics
     request.status_scale = "Received"
     account_status = db.query(dbmodel.Users).filter(dbmodel.Users.id == request.id)
-    account_status.update({"status_scale":"Sent","scale_to":request.scale_to})
+    if request.capital <= 200000 :
+      account_status.update({"status_scale":"Sent","scale_to":request.scale_to,"profit_split":0.7})
+    else :
+      account_status.update({"status_scale":"Sent","scale_to":request.scale_to,"profit_split":0.6})
     new_request = dbmodel.Requests(**request.dict())
     db.add(new_request)
     db.commit()
@@ -55,7 +58,6 @@ async def send_scale_request(request: ScaleRequest, db: Session = Depends(get_db
     "scaleTo": request.scale_to
   })
     return  new_request
-
 
 
 
