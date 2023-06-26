@@ -154,8 +154,7 @@ class ChangePassword(BaseModel):
     new_password:str
 
 
-
-    
+ 
 
 class UserCreateOut(BaseModel):
     first_name: str

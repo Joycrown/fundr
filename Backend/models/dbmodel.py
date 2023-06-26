@@ -50,7 +50,7 @@ class Requests(Base):
     __tablename__ = 'requests'
 
     serial_no = Column(Integer, primary_key=True, nullable=False)
-    id = Column(Integer, nullable=False)
+    id = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String,nullable=False)
     email = Column(String,nullable=False)
@@ -87,7 +87,7 @@ class Payouts(Base):
     __tablename__ = 'payouts'
 
     serial_no = Column(Integer, primary_key=True, nullable=False)
-    id = Column(Integer, nullable=False)
+    id = Column(String, nullable=False)
     first_name = Column(String, nullable=False,server_default="N/A")
     last_name = Column(String,nullable=False,server_default="N/A")
     status =Column(String, nullable=False)

@@ -9,8 +9,18 @@ from config.environ import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-config = context.config
-config.set_main_option("sqlalchemy.url",f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}')
+
+
+if settings.database_production_server == 'false':
+    config = context.config
+    config.set_main_option("sqlalchemy.url",f'postgresql://{settings.database_username_dev}:{settings.database_password_dev}@{settings.database_hostname_dev}:{settings.database_port_dev}/{settings.database_name_dev}')
+
+else :
+     config = context.config
+     config.set_main_option("sqlalchemy.url",f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}')
+
+# config = context.config
+# config.set_main_option("sqlalchemy.url",f'postgresql://{settings.database_username_dev}:{settings.database_password_dev}@{settings.database_hostname_dev}:{settings.database_port_dev}/{settings.database_name_dev}')
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
