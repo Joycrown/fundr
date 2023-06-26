@@ -265,7 +265,7 @@ Admin route
 To get a single payout request made by a user on fundr
 """
 @router.get('/user/payout/serial_no/{id}',response_model=PayoutOut)
-async def get_particular_payout_with_serial_no(id: int, serial_no:int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
+async def get_particular_payout_with_serial_no(id: str, serial_no:int, db: Session = Depends(get_db),current_user: int = Depends(get_current_user_admin_login)):
   account_payout_history = db.query(dbmodel.Payouts).filter(dbmodel.Payouts.id == id).all()
   if not account_payout_history:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No request history for id: {id} yet")
