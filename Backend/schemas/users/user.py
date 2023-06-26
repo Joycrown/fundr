@@ -130,7 +130,6 @@ class userUpdate(BaseModel):
     role:str
     capital:str
     phase:str
-    mt_login:str
     metatrader_password:str
     mt_server:str
     analytics: str
