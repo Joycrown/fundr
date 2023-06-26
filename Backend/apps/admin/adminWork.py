@@ -58,7 +58,7 @@ async def update_user(account: user.userUpdate , db: Session = Depends(get_db),c
   await account_setup(" Account Setup Complete", account.email, {
     "title": " Account Setup Complete",
     "name": account.first_name,
-    "metatraderId" : account.mt_login,
+    "metatraderId" : account.account_id_meta,
     "password": account.metatrader_password,
     "server": account.mt_server
     
