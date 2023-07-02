@@ -12,6 +12,7 @@ class UpgradeRequest(BaseModel):
     last_name:Optional[str]
     email:Optional[EmailStr]
     country:Optional[str]
+    analytics: Optional[str]
     phone_no:Optional[int]
     role:Optional[str]
     capital:Optional[str]

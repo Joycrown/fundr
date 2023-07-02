@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Account Purchase Complete</title>
+	<title>{{ title }}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style type="text/css">
@@ -48,12 +48,12 @@
 		<p>Hi {{ name }}!</p>
 		<p>The following request has been made on your account and is pending confirmation.</p>
 		<p> Request Type: Payout</p>
-		<p>Payout Amount: {{amount}}/p>
+		<p>Payout Amount: {{amount}}</p>
 		<p> Payment Method: {{method}}</p>
 		<p> Wallet Address: {{address}}</p>
 		<p>Status: Pending Approval</p>
 		<p>Your performance will be promptly reviewed and an update will be provided within 6hrs.</p>
-    <If>If you do not recognize this request, kindly contact support immediately.</p>
+    	<p>If you do not recognize this request, kindly contact support immediately.</p>
 		<p>With Love</p>
 		<p>The Fund'r Team, For Traders.</p>
 	</div>

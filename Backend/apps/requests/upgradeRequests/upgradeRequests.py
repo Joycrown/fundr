@@ -1,3 +1,4 @@
+import warnings
 from fastapi import  Depends,HTTPException,status,APIRouter,Response
 from schemas.requests.upgrade import UpgradeRequest, UpgradeRequestOut, UpgradeStatus, UpgradeReject,UpgradeUpdate
 from utlis.users.email import upgrade_request_completed, upgrade_request_rejected,upgrade_request,upgrade_request_processing
@@ -7,8 +8,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc 
 from apps.users.oauth import get_current_user
 from apps.admin.oauth import get_current_user_admin_login
+from apps.requests.webSocket.ws import send_websocket_message
 
-
+warnings.filterwarnings("ignore")
 
 
 router = APIRouter(
@@ -34,6 +36,7 @@ async def send_upgrade_request(request: UpgradeRequest, db: Session = Depends(ge
     request.last_name = account_details.last_name
     request.email = account_details.email
     request.country = account_details.country
+    request.analytics = account_details.analytics
     request.phone_no = account_details.phone_no
     request.role = account_details.role
     request.capital = account_details.capital
@@ -106,6 +109,9 @@ async def reject_upgrade_request(account:UpgradeReject,db: Session = Depends(get
     "phase": check_account.phase,
     "upgradeTo": check_account.upgrade_to
   })
+  message = f"Your upgrade request to {account.phase} has been rejected!"
+  user_id = str(account_details.first().id)
+  await send_websocket_message(user_id, message)
 
   return Response(status_code=status.HTTP_208_ALREADY_REPORTED)
 
@@ -135,11 +141,14 @@ async def confirm_upgrade_request(account: UpgradeUpdate , db: Session = Depends
     "title": "Update! Upgrade Request Completed",
     "name":  account_details.first().last_name,
     "phase": account.phase,
-    "mt_login": account_details.first().mt_login,
+    "type": account_details.first().type_meta,
+    "account_id": account_details.first().account_id_meta,
     "mt_password": account_details.first().metatrader_password,
     "server": account_details.first().mt_server
     })
-    
+    message = f"Your upgrade request to {account.phase} has been approved!"
+    user_id = str(account_details.first().id)
+    await send_websocket_message(user_id, message)
     
   return Response(status_code=status.HTTP_202_ACCEPTED)
 

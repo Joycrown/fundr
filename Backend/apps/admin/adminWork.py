@@ -1,10 +1,9 @@
-from fastapi import  Depends,HTTPException,status,APIRouter,Response, Query
+from fastapi import  Depends,HTTPException,status,APIRouter,Response, Query, WebSocket
 from models import dbmodel
 from config.database import get_db
 from sqlalchemy.orm import Session 
 from sqlalchemy import or_
 from schemas.users import user
-
 from datetime import datetime
 from fastapi_pagination import Page, paginate
 from utlis.users.email import  rejected_payment_email,account_confirmation,account_setup
@@ -59,6 +58,7 @@ async def update_user(account: user.userUpdate , db: Session = Depends(get_db),c
     "title": " Account Setup Complete",
     "name": account.first_name,
     "metatraderId" : account.account_id_meta,
+    "metatraderType" : account.type_meta,
     "password": account.metatrader_password,
     "server": account.mt_server
     
@@ -101,8 +101,8 @@ async def reject_payment(account:user.RejectPayment,db: Session = Depends(get_db
   #   raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail=f"User Email not a match")
   account_details = db.query(dbmodel.Users).filter(dbmodel.Users.id == account.id)
   account_details.update({"status":"Rejected","reason":account.reason},synchronize_session=False)
- 
   db.commit()
+ 
   await rejected_payment_email("Payment Rejected", account.email, {
     "title": "Registration Successful",
     "name": check_account.first_name,

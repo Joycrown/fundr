@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc 
 from apps.users.oauth import get_current_user
 from apps.admin.oauth import get_current_user_admin_login
+from apps.requests.webSocket.ws import send_websocket_message
 
 
 
@@ -43,10 +44,7 @@ async def send_scale_request(request: ScaleRequest, db: Session = Depends(get_db
     request.analytics = account_details.analytics
     request.status_scale = "Received"
     account_status = db.query(dbmodel.Users).filter(dbmodel.Users.id == request.id)
-    if request.capital <= 200000 :
-      account_status.update({"status_scale":"Sent","scale_to":request.scale_to,"profit_split":0.7})
-    else :
-      account_status.update({"status_scale":"Sent","scale_to":request.scale_to,"profit_split":0.6})
+    
     new_request = dbmodel.Requests(**request.dict())
     db.add(new_request)
     db.commit()
@@ -112,6 +110,9 @@ async def reject_scale_request(account:ScaleReject,db: Session = Depends(get_db)
     "capital": check_account.phase,
     "scaleTo": check_account.scale_to
   })
+  message = f"Your scale request has been rejected!"
+  user_id = str(account_details.first().id)
+  await send_websocket_message(user_id, message)
 
   return Response(status_code=status.HTTP_208_ALREADY_REPORTED)
 
@@ -131,18 +132,27 @@ async def confirm_scale_request(account: ScaleUpdate , db: Session = Depends(get
      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User with id: {account.id} request has been rejected")
   if account_details.first().status_scale == "Sent":
      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User with id: {account.id} request has not been processed")
-  account_details.update({"status_scale":"Completed","capital":account.capital},synchronize_session=False)
+  if account.capital <= 200000 :
+      account_details.update({"status_scale":"Completed","capital":account.capital,"profit_split":0.7},synchronize_session=False)
+  else :
+      account_details.update({"status_scale":"Completed","capital":account.capital,"profit_split":0.6},synchronize_session=False)
   user_request = db.query(dbmodel.Requests).filter(dbmodel.Requests.id == account.id).order_by(desc(dbmodel.Requests.created_at)).limit(10).first()
   user_request.status_scale = "Confirmed"
+  
   db.commit()
-  await scale_request_completed("Update! Upgrade Request Completed", account_details.first().email, {
+  await scale_request_completed("Update! Scaling Request Completed", account_details.first().email, {
     "title": "Update! Upgrade Request Completed",
     "name":  account_details.first().last_name,
     "capital": account.capital,
-    "mt_login": account_details.first().mt_login,
+    "type" : account_details.first().type_meta,
+    "account_id": account_details.first().account_id_meta,
     "password": account_details.first().metatrader_password,
     "server": account_details.first().mt_server
     })
+  message = f"Your scale request has been approved!"
+  user_id = str(account_details.first().id)
+  await send_websocket_message(user_id, message)
+
   return Response(status_code=status.HTTP_202_ACCEPTED)
 
 

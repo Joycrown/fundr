@@ -10,6 +10,7 @@ from apps.requests.upgradeRequests import upgradeRequests
 from apps.requests.payoutRequests import payoutRequest
 from apps.admin import admin, adminWork
 from apps.cyptochil import cyptochil
+from apps.requests.webSocket import ws
 
 
 
@@ -35,6 +36,7 @@ app.include_router(upgradeRequests.router)
 app.include_router(payoutRequest.router)
 app.include_router(admin.router)
 app.include_router(cyptochil.router)
+app.include_router(ws.router)
 
 add_pagination(app)
 

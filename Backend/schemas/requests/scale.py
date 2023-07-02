@@ -14,7 +14,7 @@ class ScaleRequest(BaseModel):
     country:Optional[str]
     phone_no:Optional[int]
     role:Optional[str]
-    capital:Optional[str]
+    capital:Optional[int]
     type:str
     current_capital:str
     metatrader_password: str
@@ -70,5 +70,5 @@ class ScaleReject(BaseModel):
 class ScaleUpdate(BaseModel):
     id: str
     email:EmailStr
-    capital:str
+    capital: int
    

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from sqlalchemy import desc 
 from schemas.users import user
-
+from apps.requests.webSocket.ws import send_websocket_message
 from apps.users.oauth import get_current_user
 from apps.admin.oauth import get_current_user_admin_login
 
@@ -48,6 +48,7 @@ async def send_payout_request(request: PayoutRequest, db: Session = Depends(get_
     db.refresh(new_request)
     await  payout_request("Payout Request Received!", request.email, {
     "title": "Payout Request Received!",
+    "name": request.first_name,
     "amount": request.amount,
     "method": request.payment_method,
     "address": request.wallet_address
@@ -76,9 +77,13 @@ async def reject_payout_request(account:PayoutReject,db: Session = Depends(get_d
   db.refresh(user_request)
   await payout_request_rejected ("Update! Payout Request Rejected", account.email, {
     "title": "Update! Payout Request Rejected",
+    "name": account_details.first().first_name,
     "amount": user_request.amount,
     "reason": account.reason
   })
+  message = f"Your payout request has been rejected!"
+  user_id = str(account_details.first().id)
+  await send_websocket_message(user_id, message)
 
   return Response(status_code=status.HTTP_208_ALREADY_REPORTED)
 
@@ -104,6 +109,7 @@ async def accept_payout_request(account: PayoutConfirm , db: Session = Depends(g
     db.commit()
     await payout_request_processing("Update! Payout Request Approved", account_details.first().email, {
     "title": "Update! Payout Request Approved",
+    "name": account_details.first().first_name,
     "amount":  account.amount_requested,
     "share":  account.payable_amount
     })
@@ -134,11 +140,15 @@ async def confirm_payout_request(account: PayoutConfirm , db: Session = Depends(
     
     await  payout_request_confirmation("Update! Payout Request Completed", account.email, {
     "title": "Update! Payout Request Completed",
+    "name": account_details.first().first_name,
+    "share": payout_details.first().payable_amount,
     "amount": account.amount_requested,
     "method": account.payment_method,
     "address": account.wallet_address
   })
-    
+  message = f"Your payout request has been approved!"
+  user_id = str(account_details.first().id)
+  await send_websocket_message(user_id, message)
     
   return Response(status_code=status.HTTP_202_ACCEPTED)
 
